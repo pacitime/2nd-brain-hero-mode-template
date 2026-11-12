@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  MODELLO, non un file pronto: contiene segnaposto che vanno sostituiti prima di installarlo.
+    __VAULT__   percorso assoluto della cartella del vault (senza barra finale)
+    __PYTHON__  percorso assoluto di un interprete python3 che esiste davvero
+    __HOME__    percorso assoluto della tua cartella utente
+  Come riempirli, installare e disinstallare: .claude/scripts/AUTOMAZIONI.md
+  Cosa fa: ogni ora lancia autopilot.py (call nuove, smistamento, giro posta, backup).
+  Sostituisce com.secondbrain.vault-backup: non installarli tutti e due.
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.secondbrain.autopilot</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>__PYTHON__</string>
+		<string>__VAULT__/.claude/scripts/autopilot.py</string>
+	</array>
+	<key>WorkingDirectory</key>
+	<string>__VAULT__</string>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StartInterval</key>
+	<integer>3600</integer>
+	<key>StandardOutPath</key>
+	<string>__HOME__/Library/Logs/secondbrain-autopilot.log</string>
+	<key>StandardErrorPath</key>
+	<string>__HOME__/Library/Logs/secondbrain-autopilot.log</string>
+</dict>
+</plist>

@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cruscotto</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon-192.png">
+<meta name="theme-color" content="#07080c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{ --accent:#3b6dff; }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:#07080c;color:#e8e9ee;font-family:'Geist',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Geist Mono',ui-monospace,monospace}
+  a{color:#7aa2ff;text-decoration:none}
+  button,input{font-family:inherit}
+  input::placeholder{color:#5c5f6b}
+  input:focus{outline:none;border-color:rgba(75,123,255,.55);box-shadow:0 0 0 3px rgba(75,123,255,.15)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:8px;border:2px solid #07080c}
+  .wrap{min-height:100vh;background:radial-gradient(1300px 620px at 12% -12%,rgba(59,109,255,.13),transparent 60%),radial-gradient(1000px 520px at 92% -8%,rgba(122,162,255,.07),transparent 55%),#07080c;padding-bottom:60px}
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(9,10,15,.72);border-bottom:1px solid rgba(255,255,255,.06);padding:13px 30px}
+  .hin{max-width:1560px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+  .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#8aa6ff);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(59,109,255,.4)}
+  .pill{position:relative;display:flex;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:4px}
+  .pill .slider{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:10px;background:var(--accent);box-shadow:0 4px 16px rgba(59,109,255,.45);transition:transform .34s cubic-bezier(.4,0,.2,1)}
+  .pill button{position:relative;z-index:1;border:none;background:transparent;padding:9px 22px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:color .2s;color:#82858f}
+  .main{max-width:1560px;margin:0 auto;padding:24px 30px 0}
+  .hero{display:flex;align-items:stretch;gap:14px;flex-wrap:wrap;animation:fadeUp .5s ease both}
+  .hero-today{flex:2;min-width:340px;border-radius:20px;padding:20px 24px;background:linear-gradient(120deg,var(--accent),#4a6ef5 55%,#7a8ffd);color:#fff;box-shadow:0 16px 44px rgba(59,109,255,.3);display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;position:relative;overflow:hidden}
+  .hero-today .blob{position:absolute;right:-40px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.1)}
+  .stat b{font-size:23px;font-weight:700;line-height:1}
+  .stat span{font-size:11.5px;opacity:.85;margin-top:4px;display:block}
+  .hero-side{flex:1;min-width:280px;border-radius:20px;padding:18px 22px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;justify-content:center;gap:12px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{font-size:11px;padding:6px 13px;border-radius:9px;cursor:pointer;transition:all .18s;font-weight:600}
+  .week{display:grid;grid-template-columns:repeat(7,minmax(190px,1fr));gap:12px;min-width:1000px}
+  .weekscroll{overflow-x:auto;padding-bottom:6px}
+  .day{border-radius:18px;padding:14px 13px;display:flex;flex-direction:column;gap:11px;min-height:290px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.06)}
+  .day.today{background:linear-gradient(180deg,rgba(59,109,255,.07),rgba(255,255,255,.018) 45%);border-color:rgba(94,130,255,.45);box-shadow:0 0 0 1px rgba(94,130,255,.22),0 14px 40px rgba(59,109,255,.14)}
+  .card{position:relative;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:13px;padding:10px 11px 10px 14px;display:flex;flex-direction:column;gap:8px;transition:all .18s;animation:fadeUp .45s ease both}
+  .card:hover{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12);transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.4)}
+  .card .bar{position:absolute;left:0;top:0;bottom:0;width:3px}
+  .chk{flex:none;margin-top:1px;width:17px;height:17px;border-radius:6px;border:1.5px solid rgba(255,255,255,.24);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+  .chk:hover{border-color:var(--accent)}
+  .ttitle{font-size:13px;font-weight:600;line-height:1.35;letter-spacing:-.005em;color:#e8e9ee}
+  .badge{font-size:9px;letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:5px;background:rgba(255,255,255,.05)}
+  .dots{display:flex;gap:3px;align-items:center}
+  .dot{width:11px;height:4px;border-radius:2px}
+  .sec-h{display:flex;align-items:center;gap:9px;margin:28px 0 13px}
+  .sec-h .t{font-size:14px;font-weight:700;letter-spacing:-.01em;color:#e8e9ee}
+  .grid{display:grid;gap:12px}
+  .mentions{margin-top:36px;background:linear-gradient(180deg,rgba(168,119,255,.06),rgba(168,119,255,.015));border:1px solid rgba(168,119,255,.16);border-radius:20px;padding:20px 22px}
+  .mitem{background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;transition:border-color .18s}
+  .mitem:hover{border-color:rgba(255,255,255,.12)}
+  .mrow{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;padding:13px 15px;cursor:pointer;transition:background .18s}
+  .mrow:hover{background:rgba(255,255,255,.03)}
+  .wsbadge{font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(122,162,255,.12);border:1px solid rgba(122,162,255,.22);color:#9db4ff;white-space:nowrap;flex:none}
+  .mexp{flex:none;width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#82858f;font-size:10px;line-height:1;cursor:pointer;opacity:.55;transition:all .15s}
+  .mrow:hover .mexp{opacity:1}
+  .mexp:hover{background:rgba(122,162,255,.16);border-color:rgba(122,162,255,.4);color:#b7c6ff}
+  .mdetail{padding:12px 16px 16px;border-top:1px solid rgba(255,255,255,.05);animation:fadeUp .2s ease both}
+  .mdlabel{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#6a6d78;margin-bottom:4px}
+  .mdismiss{flex:none;width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#82858f;font-size:13px;line-height:1;cursor:pointer;opacity:0;transition:all .15s}
+  .mrow:hover .mdismiss{opacity:1}
+  .mdismiss:hover{background:rgba(224,90,90,.18);border-color:rgba(224,90,90,.4);color:#ff9385}
+  .avatar{width:36px;height:36px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#0a0b0f}
+  .foot{text-align:center;margin-top:28px;font-size:11px;color:#4a4d57}
+  .muted{color:#82858f} .faint{color:#5c5f6b}
+  .card{cursor:grab} .card:active{cursor:grabbing}
+  .day.dragover{border-color:var(--accent);background:rgba(59,109,255,.14);box-shadow:0 0 0 1px var(--accent)}
+  .scadute-lane{background:linear-gradient(180deg,rgba(224,90,90,.08),rgba(224,90,90,.02));border:1px solid rgba(224,90,90,.24);border-radius:16px;padding:14px;box-shadow:0 10px 34px rgba(224,90,90,.07)}
+  .scadute-lane .card{border-color:rgba(224,90,90,.20);background:rgba(224,90,90,.035)}
+  .scadute-lane .card:hover{border-color:rgba(224,90,90,.4);box-shadow:0 10px 26px rgba(224,90,90,.18)}
+  .scadute-lane .card .bar{background:#e05a5a}
+  .scadute-lane .due{color:#e8897b}
+  .droparea{border-radius:14px;transition:outline .12s;min-height:20px}
+  .droparea.dragover{outline:2px dashed var(--accent);outline-offset:3px;background:rgba(59,109,255,.06)}
+  .cu-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#7aa2ff;background:rgba(94,130,255,.12);border:1px solid rgba(94,130,255,.28);border-radius:7px;padding:4px 9px;transition:all .15s}
+  .cu-link:hover{background:rgba(94,130,255,.24);color:#c4d5ff;border-color:rgba(94,130,255,.5)}
+  .delegate{margin-top:22px;background:linear-gradient(180deg,rgba(75,214,153,.06),rgba(75,214,153,.015));border:1px solid rgba(75,214,153,.16);border-radius:20px;padding:20px 22px}
+  .callcard{position:relative;border-radius:11px;padding:8px 10px 9px 13px;margin-bottom:7px;background:linear-gradient(180deg,rgba(94,139,255,.15),rgba(94,139,255,.05));border:1px solid rgba(94,139,255,.28);overflow:hidden}
+  .callcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#5e8bff}
+  .callmeta{display:flex;align-items:center;gap:5px;font-size:10px;color:#8ab0ff;font-weight:700;letter-spacing:.02em}
+  .calltitle{font-size:12px;font-weight:600;color:#e9eefb;margin-top:2px;line-height:1.25}
+  .subs{margin:11px 0 1px;padding:11px 4px 3px 26px;border-top:1px solid rgba(255,255,255,.07)}
+  .subhead{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+  .subbar{flex:1;height:5px;border-radius:3px;background:rgba(255,255,255,.09);overflow:hidden}
+  .subfill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+  .subcount{font-size:10px;color:#8a8d9a;font-weight:600;white-space:nowrap}
+  .subrow{display:flex;align-items:flex-start;gap:8px;padding:4px 0}
+  .subchk{flex:none;width:16px;height:16px;margin-top:1px;border-radius:5px;border:1.5px solid rgba(255,255,255,.22);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .15s}
+  .subchk:hover{border-color:var(--accent)}
+  .subchk.on{background:var(--accent);border-color:var(--accent)}
+  .subtxt{font-size:11.5px;color:#c7cad4;line-height:1.35}
+  .subrow.sdone .subtxt,.dsub.sdone .subtxt{text-decoration:line-through;color:#6b6e78}
+  .drow{position:relative;overflow:hidden;display:flex;gap:12px;align-items:center;padding:13px 15px;border-radius:14px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.06);cursor:pointer;transition:all .18s}
+  .drow:hover{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.12);transform:translateX(3px)}
+  .stpill{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;padding:3px 9px;border-radius:7px;white-space:nowrap;flex:none}
+  .prio-dots{border:none;background:transparent;cursor:pointer;padding:4px 6px;border-radius:8px;display:flex;align-items:center;transition:background .15s}
+  .prio-dots:hover{background:rgba(255,255,255,.1)}
+  .modal-bg{position:fixed;inset:0;z-index:50;background:rgba(4,5,9,.62);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding-top:14vh;animation:fadeUp .18s ease both}
+  .modal-bg.open{display:flex}
+  .modal{width:440px;max-width:calc(100vw - 32px);background:#0f1119;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:22px 22px 20px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+  .modal h3{margin:0 0 16px;font-size:16px;font-weight:700;letter-spacing:-.01em}
+  .modal label{display:block;font-size:11px;font-weight:600;color:#8a8d9a;margin:14px 0 6px;letter-spacing:.02em;text-transform:uppercase}
+  .modal input,.modal select,.modal textarea{width:100%;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:11px 13px;font-size:13.5px;color:#e8e9ee}
+  .modal textarea{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
+  .modal .hint{font-size:11px;color:#6a6d78;margin-top:6px}
+  .modal select{cursor:pointer}
+  .modal select option{background:#0f1119}
+  .modal .row{display:flex;gap:10px}
+  .modal .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+  .btn{border:none;border-radius:11px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer}
+  .btn-ghost{background:rgba(255,255,255,.05);color:#b9bcc7}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 20px rgba(59,109,255,.35)}
+  .btn-primary:disabled{opacity:.55;cursor:default}
+  /* --- Card compatte + dettaglio --- */
+  .ttitle{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .subsum{display:flex;align-items:center;gap:9px;width:100%;margin-top:2px;padding:7px 4px 1px 26px;border:none;border-top:1px solid rgba(255,255,255,.07);background:transparent;cursor:pointer;transition:opacity .15s}
+  .subsum:hover{opacity:.82}
+  .subsum .subbar{flex:1}
+  .cexp{flex:none;width:24px;height:24px;border-radius:7px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#82858f;font-size:11px;line-height:1;cursor:pointer;opacity:0;transition:all .15s}
+  .card:hover .cexp{opacity:1}
+  .cexp:hover{background:rgba(122,162,255,.16);border-color:rgba(122,162,255,.4);color:#b7c6ff}
+  .modal.wide{width:640px}
+  .dhead{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+  .dtitle{font-size:17px;font-weight:700;line-height:1.35;letter-spacing:-.015em;color:#f0f1f6}
+  .dbody{max-height:58vh;overflow-y:auto;margin-top:14px;padding-right:6px}
+  .dsec{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#6a6d78;margin:16px 0 8px}
+  .dsub{display:flex;align-items:flex-start;gap:10px;padding:7px 9px;border-radius:9px;transition:background .15s}
+  .dsub:hover{background:rgba(255,255,255,.035)}
+  .dsub .subtxt{font-size:12.5px;line-height:1.45}
+  .dmeta{font-size:11px;color:#6a6d78}
+  .dclose{position:absolute;top:16px;right:16px;width:28px;height:28px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#82858f;font-size:14px;line-height:1;cursor:pointer}
+  .dclose:hover{background:rgba(255,255,255,.09);color:#e8e9ee}
+  /* Note + aggiunta sottotask nel dettaglio */
+  .dsechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:16px 0 8px}
+  .dsechead .dsec{margin:0}
+  .dnote{width:100%;min-height:78px;resize:vertical;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.1);border-radius:11px;padding:10px 12px;font-family:inherit;font-size:12.5px;line-height:1.55;color:#e8e9ee}
+  .dnote:focus{outline:none;border-color:rgba(120,150,255,.45);background:rgba(255,255,255,.06)}
+  .dnote::placeholder{color:#5a5d68}
+  .dnoterow{display:flex;align-items:center;gap:10px;margin-top:8px}
+  .dnotehint{font-size:10.5px;color:#6a6d78;flex:1;min-width:0}
+  .dnotehint.saved{color:#5fd2a2}
+  .dnotehint.dirty{color:#e0b464}
+  .btn-mini{padding:5px 11px;font-size:11.5px;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#c9cbd4;cursor:pointer;white-space:nowrap}
+  .btn-mini:hover{background:rgba(255,255,255,.1);color:#f0f1f6}
+  .btn-mini:disabled{opacity:.4;cursor:not-allowed}
+  .daddsub{display:flex;gap:8px;margin-top:9px}
+  .daddsub input{flex:1;min-width:0;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.14);border-radius:9px;padding:8px 11px;font-size:12.5px;color:#e8e9ee;font-family:inherit}
+  .daddsub input:focus{outline:none;border-style:solid;border-color:rgba(120,150,255,.45)}
+  .daddsub input::placeholder{color:#5a5d68}
+  .daddsub input:disabled{opacity:.45;cursor:not-allowed}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hin">
+      <div style="display:flex;align-items:center;gap:13px">
+        <div class="logo"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="8" height="8" rx="2" fill="#fff" opacity=".98"/><rect x="13" y="3" width="8" height="8" rx="2" fill="#fff" opacity=".6"/><rect x="3" y="13" width="8" height="8" rx="2" fill="#fff" opacity=".6"/><rect x="13" y="13" width="8" height="8" rx="2" fill="#fff" opacity=".9"/></svg></div>
+        <div><div style="font-size:20px;font-weight:800;letter-spacing:-.03em">Cruscotto</div><div class="mono" id="range" style="font-size:12px;color:#7c7f8b;margin-top:2px"></div></div>
+      </div>
+      <div class="pill">
+        <div class="slider" id="slider"></div>
+        <button id="tabWeek" onclick="setView('week')">Settimana</button>
+        <button id="tabProj" onclick="setView('project')">Per progetto</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex:1;justify-content:flex-end;min-width:280px">
+        <div style="position:relative;width:250px">
+          <input id="q" oninput="onSearch(this.value)" placeholder="Cerca task…" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:9px 14px;font-size:12.5px;color:#e8e9ee">
+        </div>
+        <button onclick="openAdd()" title="Aggiungi task" style="display:flex;align-items:center;gap:7px;height:38px;padding:0 15px;border-radius:11px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 6px 20px rgba(59,109,255,.35)">＋ Aggiungi</button>
+        <button onclick="load()" title="Aggiorna" style="width:38px;height:38px;border-radius:11px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#9598a3;cursor:pointer">↻</button>
+      </div>
+    </div>
+  </header>
+  <div class="main">
+    <div class="hero">
+      <div class="hero-today">
+        <div class="blob"></div>
+        <div>
+          <div class="mono" style="font-size:11px;letter-spacing:.14em;opacity:.85" id="todayLabel">OGGI</div>
+          <div style="font-size:27px;font-weight:800;letter-spacing:-.03em;margin-top:4px" id="todayDate">…</div>
+        </div>
+        <div style="display:flex;gap:26px;flex-wrap:wrap">
+          <div class="stat"><b class="mono" id="sToday">0</b><span>task oggi</span></div>
+          <div class="stat"><b class="mono" id="sOver">0</b><span>scadute</span></div>
+          <div class="stat" id="statMent" hidden><b class="mono" id="sMent">0</b><span>menzioni</span></div>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-size:12px;font-weight:600;color:#b9bcc7">Carico</span><span class="mono" id="hTotal" style="font-size:12px;color:var(--accent);font-weight:600"></span></div>
+        <div class="mono faint" style="font-size:11px" id="hBreak"></div>
+        <div style="display:flex;align-items:center;gap:8px;color:#5c5f6b;font-size:11px" class="mono"><span>PRIORITÀ</span><span class="muted">bassa</span><span class="dots"><span class="dot" style="background:#33c481"></span><span class="dot" style="background:#f5b83a"></span><span class="dot" style="background:#ff6f5b"></span></span><span class="muted">alta</span></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:20px 0 4px">
+      <div class="chips" id="chips"></div>
+      <div class="mono" style="font-size:12px;color:#7c7f8b">aggiornato ora</div>
+    </div>
+    <div id="remWarn" hidden style="margin:10px 0 4px;padding:10px 14px;border-radius:11px;border:1px solid rgba(224,180,100,.35);background:rgba(224,180,100,.08);color:#e0b464;font-size:12.5px;line-height:1.45"></div>
+    <div id="view"></div>
+    <div class="mentions" id="mentBox" hidden>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border-radius:10px;background:rgba(168,119,255,.16);display:flex;align-items:center;justify-content:center;color:#c3a6ff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div><div style="font-size:14px;font-weight:700">Menzioni ClickUp</div><div class="mono" style="font-size:11px;color:#82858f;margin-top:1px">dove ti hanno @menzionato · non ancora risposti</div></div>
+          <span id="mBadge"></span>
+        </div>
+      </div>
+      <div class="grid" id="mentions" style="grid-template-columns:repeat(auto-fill,minmax(370px,1fr))"></div>
+    </div>
+    <div class="delegate" id="delegBox" hidden>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+        <div style="width:32px;height:32px;border-radius:10px;background:rgba(75,214,153,.16);display:flex;align-items:center;justify-content:center;color:#4bd699"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div><div style="font-size:14px;font-weight:700">Delegate</div><div class="mono" style="font-size:11px;color:#82858f;margin-top:1px">task che hai passato al team · stato live</div></div>
+        <span id="dBadge"></span>
+      </div>
+      <div class="grid" id="delegated" style="grid-template-columns:repeat(auto-fill,minmax(370px,1fr))"></div>
+    </div>
+    <div class="mono foot" id="foot"></div>
+  </div>
+</div>
+<div class="modal-bg" id="detBg" onclick="if(event.target===this)closeDetail()">
+  <div class="modal wide" style="position:relative">
+    <button class="dclose" title="Chiudi (Esc)" onclick="closeDetail()">✕</button>
+    <div id="detBody"></div>
+  </div>
+</div>
+<div class="modal-bg" id="addBg" onclick="if(event.target===this)closeAdd()">
+  <div class="modal">
+    <h3>Nuova task</h3>
+    <label>Testo</label>
+    <input id="addText" placeholder="Cosa c'è da fare…" onkeydown="if(event.key==='Enter')submitAdd();if(event.key==='Escape')closeAdd()">
+    <div class="row">
+      <div style="flex:1">
+        <label>Destinazione</label>
+        <select id="addTarget" onchange="onTargetChange()"></select>
+      </div>
+      <div style="width:150px">
+        <label>Scadenza (opz.)</label>
+        <input id="addDue" type="date">
+      </div>
+    </div>
+    <label>Tag (separati da spazio, opz.)</label>
+    <input id="addTags" placeholder="progetto-esempio urgente" onkeydown="if(event.key==='Escape')closeAdd()">
+    <div class="hint">Il <b>primo tag</b> decide progetto e colore nel cruscotto. Si pre-compila dal progetto Vault scelto; aggiungi pure categorie (es. <code>urgente</code>, <code>call</code>).</div>
+    <label>Sottotask (una per riga, opz.)</label>
+    <textarea id="addSubs" placeholder="Prima sottotask&#10;Seconda sottotask" onkeydown="if(event.key==='Escape')closeAdd()"></textarea>
+    <div class="hint" id="subsHint">Le sottotask sono salvate solo nelle destinazioni <b>Vault</b>. Su Promemoria/ClickUp vengono ignorate.</div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="closeAdd()">Annulla</button>
+      <button class="btn btn-primary" id="addSubmit" onclick="submitAdd()">Crea</button>
+    </div>
+  </div>
+</div>
+<script>
+// Progetti, filtri, colori e destinazioni NON sono cablati qui: arrivano dal server a ogni load()
+// (progetti di brain.json + tag trovati nelle task). CFG è l'ultima risposta di /api/tasks.
+let CFG={projects:[],targets:[],clickup:{on:false,msg:"",mentions:false,delegated:false}};
+const PALETTE=["#5e8bff","#33c481","#b48cff","#ff6f5b","#4bd6c6","#e88bd0","#f5d03a","#7ad0ff"];
+const FIXED_COLOR={"promemoria":"#f5a524","senza-progetto":"#9aa0aa"};
+const SOURCES={clickup:{label:"ClickUp",color:"#b48cff"},reminder:{label:"Promemoria",color:"#f5a524"},native:{label:"Vault",color:"#4bd699"}};
+const WCOLOR={1:"#33c481",2:"#f5b83a",3:"#ff6f5b"};
+const DAYN=["LUN","MAR","MER","GIO","VEN","SAB","DOM"];
+let ALL=[], MENT=[], DELEG=[], CALLS=[], view="week", filter="all", query="";
+const REMWEIGHT={low:1,medium:2,high:3};
+const remWeight=p=>REMWEIGHT[p]||0;
+const nextPrio=p=>{const seq=[null,"low","medium","high"];return seq[(seq.indexOf(p||null)+1)%4];};
+// Data calendario LOCALE (non UTC): toISOString() sfaserebbe di un giorno nei fusi avanti a UTC.
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function monday(){const x=new Date();x.setHours(0,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
+function weightOf(t){return t.prio==="highest"||t.prio==="high"?3:t.prio==="medium"?2:1;}
+// Il PRIMO tag decide il progetto. Una task del vault senza tag prende il progetto della sua cartella.
+function projOf(t){
+  if(t.tags&&t.tags[0]) return t.tags[0];
+  const f=t.file||"", p=CFG.projects.find(x=>f.startsWith(x.path+"/"));
+  return p?p.tag:"senza-progetto";
+}
+// Colore stabile senza elenco cablato: i progetti dichiarati per posizione in brain.json,
+// ogni altro tag da un hash del nome (lo stesso tag ha sempre lo stesso colore).
+function colorOf(p){
+  if(FIXED_COLOR[p]) return FIXED_COLOR[p];
+  const i=CFG.projects.findIndex(x=>x.tag===p);
+  if(i>=0) return PALETTE[i%PALETTE.length];
+  let h=0; for(const c of String(p)) h=(h*31+c.charCodeAt(0))>>>0;
+  return PALETTE[h%PALETTE.length];
+}
+function projInfo(p){return {label:"#"+esc(p),color:colorOf(p)};}
+function match(t){const q=query.trim().toLowerCase();const pf=filter==="all"||projOf(t)===filter;const qf=!q||(t.text||"").toLowerCase().includes(q);return pf&&qf;}
+
+function checkSvg(){return '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';}
+function card(t){
+  const isRem=t.source==="reminder";
+  const w=isRem?remWeight(t.prio):weightOf(t);
+  const pi=projInfo(projOf(t)), si=SOURCES[t.source]||SOURCES.native;
+  const dots=[1,2,3].map(i=>`<span class="dot" style="background:${w&&i<=w?WCOLOR[w]:'rgba(255,255,255,.13)'}"></span>`).join("");
+  const dotsEl=isRem
+    ? `<button class="prio-dots" title="Priorità (solo cruscotto, non tocca Apple) · clicca per cambiare" onclick="event.stopPropagation();cyclePrio(${t._uid})"><span class="dots">${dots}</span></button>`
+    : `<div class="dots">${dots}</div>`;
+  const due=t.due?`<span class="mono" style="display:flex;align-items:center;gap:4px;font-size:10px;color:#8a8d9a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>${t.due}</span>`:"";
+  const link=t.url?`<a class="cu-link" href="${t.url}" target="_blank" draggable="false" onclick="event.stopPropagation()" title="Apri su ClickUp"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Apri</a>`:"";
+  const kids=t.children||[];
+  let subs="";
+  // Sottotask NON stampate inline (facevano colonne chilometriche): solo il progresso, il resto nel dettaglio.
+  if(kids.length){
+    const doneN=kids.filter(k=>k.done).length, tot=kids.length, pct=Math.round(doneN/tot*100);
+    subs=`<button class="subsum" title="Apri i dettagli" onclick="event.stopPropagation();openDetail(${t._uid})">
+      <div class="subbar"><div class="subfill" style="width:${pct}%"></div></div>
+      <span class="mono subcount">${doneN}/${tot}</span>
+      <span class="mono subcount" style="color:#7aa2ff">apri</span>
+    </button>`;
+  }
+  const exp=`<button class="cexp" title="Dettagli" onclick="event.stopPropagation();openDetail(${t._uid})">⤢</button>`;
+  return `<div class="card" draggable="true" ondragstart="drag(event,${t._uid})" ondragend="DRAG=false" onclick="openDetail(${t._uid})">
+    <div class="bar" style="background:${pi.color}"></div>
+    <div style="display:flex;align-items:flex-start;gap:9px">
+      <button class="chk" onclick="event.stopPropagation();complete(${t._uid})">${'' }</button>
+      <div class="ttitle">${esc(t.text)}</div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:26px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="badge mono" style="color:${si.color}">${si.label}</span>
+        <span class="mono" style="font-size:10px;color:${pi.color}">${pi.label}</span>${due}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">${exp}${link}${dotsEl}</div>
+    </div>
+    ${subs}
+  </div>`;
+}
+
+function bucket(){
+  const mon=monday(), sun=new Date(mon); sun.setDate(mon.getDate()+6);
+  const tISO=iso(new Date(new Date().setHours(0,0,0,0))), sunISO=iso(sun), monISO=iso(mon);
+  const days=Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return{i,iso:iso(d),date:d.getDate()+"/"+(d.getMonth()+1),today:iso(d)===tISO};});
+  const tasks=ALL.filter(match);
+  const inDay={}, upcoming=[], backlog=[], overdue=[];
+  tasks.forEach(t=>{
+    if(!t.due){backlog.push(t);return;}
+    if(t.due<tISO){overdue.push(t);return;}     // scaduta
+    if(t.due>sunISO){upcoming.push(t);return;}
+    (inDay[t.due]=inDay[t.due]||[]).push(t);
+  });
+  return {days,inDay,upcoming,backlog,overdue,tISO};
+}
+
+function renderWeek(){
+  const {days,inDay,upcoming,backlog,overdue}=bucket();
+  const callsByDay={};
+  (CALLS||[]).forEach(c=>{(callsByDay[c.date]=callsByDay[c.date]||[]).push(c);});
+  let h='<div style="animation:fadeUp .35s ease both;margin-top:18px"><div class="weekscroll"><div class="week">';
+  days.forEach(d=>{
+    const list=(inDay[d.iso]||[]);
+    const calls=(callsByDay[d.iso]||[]);
+    const empty=!list.length&&!calls.length;
+    h+=`<div class="day${d.today?' today':''}" ondragover="dayOver(event,this)" ondragleave="dayLeave(this)" ondrop="dayDrop(event,'${d.iso}',this)">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:7px"><span class="mono" style="font-size:10px;letter-spacing:.14em;color:${d.today?'#8aa6ff':'#7c7f8b'}">${DAYN[d.i]}</span>${d.today?'<span class="mono" style="font-size:9px;font-weight:700;color:#fff;background:var(--accent);padding:1px 6px;border-radius:5px">OGGI</span>':''}</div>
+        <span style="font-size:17px;font-weight:700;color:${d.today?'#8aa6ff':'#e8e9ee'}">${d.date}</span>
+      </div>
+      ${calls.map(callCard).join("")}${list.map(card).join("")}${empty?'<div style="flex:1;display:flex;align-items:center;justify-content:center;color:#42454f;font-size:12px" class="mono">libero</div>':''}
+    </div>`;
+  });
+  h+='</div></div>';
+  const weekEnd=days[6].iso;
+  const upcomingCalls=(CALLS||[]).filter(c=>c.date>weekEnd).sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||"")));
+  if(upcomingCalls.length) h+=section("Call in arrivo",upcomingCalls.length)+`<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-top:2px">${upcomingCalls.map(c=>callCard(c,true)).join("")}</div>`;
+  if(overdue.length) h+=`<div class="sec-h" style="margin-top:26px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e05a5a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="t" style="color:#ff7a6b">Scadute</span><span class="mono" style="font-size:11px;color:#e05a5a;font-weight:700">${overdue.length}</span></div><div class="scadute-lane">${grid(overdue,"280")}</div>`;
+  if(upcoming.length) h+=section("Più avanti",upcoming.length)+grid(upcoming,"310");
+  h+=section("Backlog · senza data",backlog.length)+`<div class="droparea" ondragover="areaOver(event,this)" ondragleave="areaLeave(this)" ondrop="areaDrop(event,this)">`+(backlog.length?grid(backlog,"280"):'<div class="mono faint" style="padding:16px;text-align:center;font-size:12px">Trascina qui una card per togliere la data</div>')+`</div>`;
+  h+='</div>';
+  return h;
+}
+function section(title,count){return `<div class="sec-h"><span class="t">${title}</span><span class="mono faint" style="font-size:11px">${count}</span></div>`;}
+function grid(list,min){return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(${min}px,1fr))">${list.map(card).join("")}</div>`;}
+
+function renderProject(){
+  const tasks=ALL.filter(match), groups={};
+  tasks.forEach(t=>{const p=projOf(t);(groups[p]=groups[p]||[]).push(t);});
+  const names=Object.keys(groups).sort();
+  if(!names.length) return '<div class="mono faint" style="margin-top:20px">Nessuna task.</div>';
+  return '<div style="margin-top:18px;display:flex;flex-direction:column;gap:28px">'+names.map(p=>{
+    const pi=projInfo(p);
+    return `<div><div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">
+      <span style="width:11px;height:11px;border-radius:50%;background:${pi.color};box-shadow:0 0 14px ${pi.color}"></span>
+      <span class="mono" style="font-size:16px;font-weight:700;color:${pi.color}">${pi.label}</span>
+      <span class="mono faint" style="font-size:12px">${groups[p].length} task</span></div>
+      ${grid(groups[p],"295")}</div>`;
+  }).join("")+'</div>';
+}
+
+function render(){
+  document.getElementById("view").innerHTML = view==="week"?renderWeek():renderProject();
+  document.getElementById("slider").style.transform = view==="week"?"translateX(0)":"translateX(100%)";
+  document.getElementById("tabWeek").style.color = view==="week"?"#fff":"#82858f";
+  document.getElementById("tabProj").style.color = view==="project"?"#fff":"#82858f";
+  const {inDay,backlog,tISO,upcoming}=bucket();
+  const over=(ALL.filter(match).filter(t=>t.due&&t.due<tISO)).length;
+  document.getElementById("sToday").textContent=(inDay[tISO]||[]).length;
+  document.getElementById("sOver").textContent=over;
+  document.getElementById("sMent").textContent=MENT.filter(m=>!m._read).length;
+  document.getElementById("hTotal").textContent=ALL.filter(match).length+" attive";
+  document.getElementById("hBreak").textContent=`${upcoming.length} più avanti · ${backlog.length} backlog`;
+  document.getElementById("foot").textContent=`${ALL.length} task · ${CFG.clickup.msg||""}`;
+}
+
+function setView(v){view=v;render();}
+function onSearch(v){query=v;render();}
+// Filtri costruiti dai dati: prima i progetti dichiarati in brain.json, poi i tag trovati nelle task.
+let CHIPS=[];
+function setFilter(i){filter=CHIPS[i]?CHIPS[i][0]:"all";renderChips();render();}
+function renderChips(){
+  const seen=new Set(), keys=[];
+  const add=k=>{ if(k&&!seen.has(k)){ seen.add(k); keys.push(k); } };
+  CFG.projects.forEach(p=>add(p.tag));
+  ALL.map(projOf).sort().forEach(add);
+  if(filter!=="all"&&!seen.has(filter)) filter="all";     // il progetto filtrato non c'è più: si torna a Tutti
+  CHIPS=[["all","Tutti","#c9d4f5"]].concat(keys.map(k=>[k,projInfo(k).label,colorOf(k)]));
+  document.getElementById("chips").innerHTML=CHIPS.map(([k,l,c],i)=>{
+    const a=filter===k;
+    return `<button class="chip mono" onclick="setFilter(${i})" style="border:1px solid ${a?c:'rgba(255,255,255,.08)'};color:${a?'#0a0b0f':c};background:${a?c:'rgba(255,255,255,.02)'}">${l}</button>`;
+  }).join("");
+}
+
+function timeago(ms){const n=Date.now(),d=n-Number(ms);if(!ms||isNaN(d))return"";const h=d/36e5;if(h<1)return Math.max(1,Math.round(d/6e4))+"m fa";if(h<24)return Math.round(h)+"h fa";return Math.round(h/24)+"g fa";}
+// Badge rosso col numero sull'icona del Dock (Badging API: funziona nella finestra-app di Chrome).
+function setDockBadge(n){ try{ if(n>0){ navigator.setAppBadge&&navigator.setAppBadge(n); } else { navigator.clearAppBadge&&navigator.clearAppBadge(); } }catch(e){} }
+function renderMentions(){
+  const el=document.getElementById("mentions");
+  const badge=document.getElementById("mBadge");
+  const unread=MENT.filter(m=>!m._read).length;
+  badge.innerHTML=unread?`<span class="mono" style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#ff6f5b;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">${unread}</span>`:"";
+  setDockBadge(unread);   // pallino rosso sull'icona nel Dock
+  if(!MENT.length){el.innerHTML='<div class="mono faint" style="font-size:12px">Nessuna menzione in sospeso: sei in pari. 🎉</div>';return;}
+  const palette=["#f5a524","#33c481","#5e8bff","#b48cff","#ff6f5b"];
+  el.innerHTML=MENT.map((m,i)=>{
+    const col=palette[i%palette.length], ini=(m.who||"?").slice(0,2).toUpperCase();
+    const wsParts=[m.folder,m.list].filter(x=>x&&x.toLowerCase()!=="hidden");
+    const ws=wsParts.length?`<span class="wsbadge mono">${esc(wsParts.join(" · "))}</span>`:"";
+    const detail=m._exp?`<div class="mdetail">
+        <div class="mdlabel">Task</div>
+        <div style="font-size:12.5px;font-weight:600;color:#b7c6ff;margin-bottom:11px;line-height:1.4">${esc(m.task)}</div>
+        <div class="mdlabel">Commento di ${esc(m.who)}</div>
+        <div style="font-size:12px;color:#c9ccd6;line-height:1.5;white-space:pre-wrap">${esc(m.full||m.text)}</div>
+        <a class="cu-link" href="${m.url}" target="_blank" onclick="event.stopPropagation()" style="margin-top:13px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Apri su ClickUp</a>
+      </div>`:"";
+    return `<div class="mitem" style="opacity:${m._read?.6:1}">
+      <div class="mrow" onclick="window.open('${m.url}','_blank')">
+        <div class="bar" style="background:${m._read?'rgba(255,255,255,.06)':col}"></div>
+        <div class="avatar mono" style="background:${col}">${esc(ini)}</div>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:700">${esc(m.who)}</span><span class="muted" style="font-size:12px">ha commentato</span>${ws}</div>
+          <div style="font-size:12px;color:#b7c6ff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(m.task)}</div>
+          <div style="font-size:11.5px;color:#8a8d9a;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(m.text)}</div>
+        </div>
+        <span class="mono faint" style="font-size:10px;white-space:nowrap">${timeago(m.date)}</span>
+        <button class="mexp" title="${m._exp?'Comprimi':'Espandi'}" onclick="event.stopPropagation();toggleMention(${i})">${m._exp?'▲':'▼'}</button>
+        <button class="mdismiss" title="Togli dal cruscotto (non tocca ClickUp)" onclick="event.stopPropagation();dismissMention('${esc(String(m.id))}')">✕</button>
+      </div>
+      ${detail}
+    </div>`;
+  }).join("");
+}
+
+function toggleMention(i){ if(MENT[i]){ MENT[i]._exp=!MENT[i]._exp; renderMentions(); } }
+
+async function dismissMention(id){
+  MENT=MENT.filter(m=>String(m.id)!==String(id));   // via subito dalla vista
+  renderMentions(); render();
+  try{ await fetch("/api/mentions/dismiss",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id})}); }
+  catch(e){ /* resta scartata in UI; il server la ri-manderebbe solo al prossimo giro se il POST fallisce */ }
+}
+
+function renderDelegated(){
+  const el=document.getElementById("delegated"), badge=document.getElementById("dBadge");
+  badge.innerHTML=DELEG.length?`<span class="mono" style="min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#4bd699;color:#06110b;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">${DELEG.length}</span>`:"";
+  if(!DELEG.length){el.innerHTML='<div class="mono faint" style="font-size:12px">Nessuna task delegata attiva.</div>';return;}
+  const palette=["#4bd699","#5e8bff","#f5a524","#b48cff","#ff6f5b"];
+  el.innerHTML=DELEG.map((d,i)=>{
+    const col=palette[i%palette.length], ini=(d.who||"?").slice(0,2).toUpperCase();
+    const sc=d.status_color||"#8a8d9a";
+    const due=d.due?`<span class="mono faint" style="font-size:10px">📅 ${d.due}</span>`:"";
+    return `<div class="drow" onclick="window.open('${d.url}','_blank')">
+      <div class="bar" style="background:${sc}"></div>
+      <div class="avatar mono" style="background:${col}">${esc(ini)}</div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px">
+        <div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.text)}</div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="muted" style="font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.who)}</span>${due}</div>
+      </div>
+      <span class="stpill" style="background:${sc}22;color:${sc}">${esc(d.status)}</span>
+    </div>`;
+  }).join("");
+}
+
+function callCard(c,withDate){
+  const dur=c.dur?` · ${esc(c.dur)}`:"";
+  let dl="";
+  if(withDate&&c.date){const p=c.date.split("-");dl=p[2]+"/"+p[1]+" · ";}
+  return `<div class="callcard">
+    <div class="mono callmeta"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>${dl}${esc(c.time||"")}${dur}</div>
+    <div class="calltitle">${esc(c.title)}</div>
+  </div>`;
+}
+
+async function cyclePrio(uid){
+  const t=ALL.find(x=>x._uid===uid); if(!t||t.source!=="reminder")return;
+  const np=nextPrio(t.prio); t.prio=np; render();
+  try{ await fetch("/api/reminder-prio",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:t.text,prio:np})}); }
+  catch(e){ /* resta in UI; si riallinea al prossimo load */ }
+}
+
+function drag(e,uid){ DRAG=true; e.dataTransfer.setData("text/plain",String(uid)); e.dataTransfer.effectAllowed="move"; }
+function dayOver(e,el){ e.preventDefault(); el.classList.add("dragover"); }
+function dayLeave(el){ el.classList.remove("dragover"); }
+function dayDrop(e,dISO,el){ e.preventDefault(); el.classList.remove("dragover"); const uid=Number(e.dataTransfer.getData("text/plain")); reschedule(uid,dISO); }
+function areaOver(e,el){ e.preventDefault(); el.classList.add("dragover"); }
+function areaLeave(el){ el.classList.remove("dragover"); }
+function areaDrop(e,el){ e.preventDefault(); el.classList.remove("dragover"); const uid=Number(e.dataTransfer.getData("text/plain")); reschedule(uid,null); }
+
+async function reschedule(uid,date){
+  const t=ALL.find(x=>x._uid===uid); if(!t||t.due===date) return;
+  const prev=t.due; t.due=date; render();
+  try{
+    const r=await fetch("/api/reschedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...t,due:date})});
+    const j=await r.json();
+    if(!j.ok){ t.due=prev; render(); alert("Spostamento non riuscito: "+(j.msg||"errore")); }
+  }catch(e){ t.due=prev; render(); alert("Errore rete: "+e); }
+}
+
+// --- Dettaglio task (modale stile ClickUp) ---
+// Chiave stabile: dopo un reload gli _uid si riassegnano, la modale aperta va ri-agganciata al dato vero.
+const keyOf=t=>[t.file||"",t.line??"",t.cu_id||"",t.text||""].join("|");
+let DET_KEY=null, DRAG=false, NOTE_DIRTY=false;
+function findByKey(k){
+  if(!k) return null;
+  for(const t of ALL){ if(keyOf(t)===k) return t; }
+  return null;
+}
+function openDetail(uid){
+  if(DRAG){ DRAG=false; return; }                 // era un drag, non un click
+  const f=findTask(uid); if(!f) return;
+  DET_KEY=keyOf(f.parent||f.task);                // da una sottotask apro comunque la madre
+  NOTE_DIRTY=false;
+  renderDetail();
+  document.getElementById("detBg").classList.add("open");
+}
+function closeDetail(force){
+  // chiusura voluta dall'utente con note non salvate → chiedi, non buttare via quello che ha scritto
+  if(!force&&NOTE_DIRTY&&!confirm("Hai note non salvate. Chiudere lo stesso?")) return;
+  DET_KEY=null; NOTE_DIRTY=false;
+  document.getElementById("detBg").classList.remove("open");
+}
+function renderDetail(){
+  const t=findByKey(DET_KEY);
+  if(!t){ closeDetail(true); return; }              // la task non c'è più: chiudi senza chiedere
+  // L'auto-refresh a 90s ricostruisce la modale: se stavi scrivendo, il testo non deve sparire.
+  const keep=snapField("detNote", NOTE_DIRTY), keepSub=snapField("detSub", true);
+  const isRem=t.source==="reminder";
+  const w=isRem?remWeight(t.prio):weightOf(t);
+  const pi=projInfo(projOf(t)), si=SOURCES[t.source]||SOURCES.native;
+  const dots=[1,2,3].map(i=>`<span class="dot" style="background:${w&&i<=w?WCOLOR[w]:'rgba(255,255,255,.13)'}"></span>`).join("");
+  const kids=t.children||[];
+  const doneN=kids.filter(k=>k.done).length, tot=kids.length;
+  const pct=tot?Math.round(doneN/tot*100):0;
+  const tags=(t.tags||[]).slice(1).map(x=>`<span class="badge mono">#${esc(x)}</span>`).join(" ");
+  const link=t.url?`<a class="cu-link" href="${t.url}" target="_blank" onclick="event.stopPropagation()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>Apri su ClickUp</a>`:"";
+  const isNative=t.source==="native"&&!!t.file;
+  const addRow=isNative
+    ?`<div class="daddsub">
+        <input id="detSub" autocomplete="off" placeholder="Aggiungi sottotask… (Invio)"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();addSub();}">
+        <button class="btn-mini" onclick="addSub()">+ Aggiungi</button>
+      </div>`
+    :`<div class="daddsub"><input disabled placeholder="Sottotask solo sulle task native del vault"></div>`;
+  const subs=`<div class="dsec">Sottotask</div>`+(tot
+    ?`<div class="subhead"><div class="subbar"><div class="subfill" style="width:${pct}%"></div></div><span class="mono subcount">${doneN}/${tot}</span></div>
+      ${kids.map(k=>`<div class="dsub${k.done?' sdone':''}"><button class="subchk${k.done?' on':''}" onclick="event.stopPropagation();complete(${k._uid})">${k.done?checkSvg():''}</button><span class="subtxt">${esc(k.text)}</span></div>`).join("")}`
+    :'<div class="mono faint" style="font-size:12px">Nessuna sottotask.</div>')+addRow;
+  const noteHint=isNative
+    ?`Salvata nel markdown: resta visibile in Obsidian, in git e nel backup.`
+    :`Nota <b>locale</b> del cruscotto: non tocca ${t.source==="clickup"?"ClickUp":"Promemoria"}.`;
+  const noteSec=`<div class="dsec">Note / descrizione</div>
+      <textarea id="detNote" class="dnote" placeholder="Contesto, link, cosa serve per chiuderla…" oninput="noteDirty()">${esc(t.note||"")}</textarea>
+      <div class="dnoterow">
+        <button class="btn-mini" id="detNoteBtn" onclick="saveNote()" disabled>Salva note</button>
+        <span class="dnotehint" id="detNoteHint">${noteHint}</span>
+      </div>`;
+  document.getElementById("detBody").innerHTML=`
+    <div class="dhead">
+      <span style="width:9px;height:9px;border-radius:50%;background:${pi.color};box-shadow:0 0 12px ${pi.color}"></span>
+      <span class="mono" style="font-size:11.5px;font-weight:700;color:${pi.color}">${pi.label}</span>
+      <span class="badge mono" style="color:${si.color}">${si.label}</span>
+      ${t.due?`<span class="badge mono">📅 ${t.due}</span>`:""}
+      <span class="dots" style="margin-left:2px">${dots}</span>
+    </div>
+    <div class="dtitle" style="padding-right:34px">${esc(t.text)}</div>
+    <div class="dbody">
+      ${tags?`<div class="dsec">Tag</div><div style="display:flex;gap:6px;flex-wrap:wrap">${tags}</div>`:""}
+      ${noteSec}
+      ${subs}
+      <div class="dsec">Origine</div>
+      <div class="mono dmeta">${t.file?esc(t.file)+(t.line!=null?" · riga "+(t.line+1):""):esc(si.label)}</div>
+    </div>
+    <div class="actions">
+      ${link}
+      <button class="btn btn-ghost" onclick="closeDetail()">Chiudi</button>
+      <button class="btn btn-primary" onclick="completeFromDetail()">Completa</button>
+    </div>`;
+  restoreField("detNote",keep); restoreField("detSub",keepSub);
+  if(NOTE_DIRTY) noteDirty();
+}
+function completeFromDetail(){ const t=findByKey(DET_KEY); if(t) complete(t._uid); }
+
+// --- Note + sottotask manuali dal dettaglio ---
+// snap/restore: la modale si ridisegna a ogni load(); senza questo, un refresh mentre scrivi
+// azzererebbe il campo (stesso motivo per cui la modale usa una chiave stabile e non l'_uid).
+function snapField(id,when){
+  const el=document.getElementById(id);
+  if(!el||!when||(!el.value&&document.activeElement!==el)) return null;
+  return {v:el.value,s:el.selectionStart,e:el.selectionEnd,f:document.activeElement===el};
+}
+function restoreField(id,k){
+  if(!k) return;
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.value=k.v;
+  if(k.f){ el.focus(); try{ el.setSelectionRange(k.s,k.e); }catch(_){} }
+}
+function noteDirty(){
+  NOTE_DIRTY=true;
+  const b=document.getElementById("detNoteBtn"), h=document.getElementById("detNoteHint");
+  if(b) b.disabled=false;
+  if(h){ h.className="dnotehint dirty"; h.textContent="Modifiche non salvate."; }
+}
+async function saveNote(){
+  const t=findByKey(DET_KEY), ta=document.getElementById("detNote");
+  if(!t||!ta) return;
+  const b=document.getElementById("detNoteBtn"), h=document.getElementById("detNoteHint");
+  if(b) b.disabled=true;
+  try{
+    const r=await fetch("/api/note",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({source:t.source,file:t.file,line:t.line,cu_id:t.cu_id,text:t.text,note:ta.value})});
+    const j=await r.json();
+    if(j.ok){
+      t.note=ta.value; NOTE_DIRTY=false;
+      if(h){ h.className="dnotehint saved"; h.textContent="Salvato."; }
+    }else{
+      if(b) b.disabled=false;
+      alert("Note non salvate: "+(j.msg||"errore"));
+    }
+  }catch(e){ if(b) b.disabled=false; alert("Errore rete: "+e); }
+}
+async function addSub(){
+  const t=findByKey(DET_KEY), inp=document.getElementById("detSub");
+  if(!t||!inp) return;
+  const v=inp.value.trim();
+  if(!v) return;
+  inp.disabled=true;
+  try{
+    const r=await fetch("/api/subtask",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({source:t.source,file:t.file,line:t.line,text:t.text,subtask:v})});
+    const j=await r.json();
+    if(j.ok){ inp.value=""; inp.disabled=false; await load(); document.getElementById("detSub")?.focus(); }
+    else{ inp.disabled=false; alert("Sottotask non aggiunta: "+(j.msg||"errore")); }
+  }catch(e){ inp.disabled=false; alert("Errore rete: "+e); }
+}
+
+function findTask(uid){
+  for(const t of ALL){
+    if(t._uid===uid) return {task:t,parent:null};
+    for(const c of (t.children||[])) if(c._uid===uid) return {task:c,parent:t};
+  }
+  return null;
+}
+
+async function complete(uid){
+  const f=findTask(uid); if(!f)return; const t=f.task;
+  try{const r=await fetch("/api/complete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(t)});
+    const j=await r.json();
+    if(j.ok){
+      const wasOpen=DET_KEY&&DET_KEY===keyOf(t);
+      if(f.parent){ t.done=true; } else { ALL=ALL.filter(x=>x!==t); }
+      if(wasOpen&&!f.parent) closeDetail(true); else if(DET_KEY) renderDetail();
+      render();
+    }
+    else alert("Non completata: "+(j.msg||"errore"));
+  }catch(e){alert("Errore rete: "+e);}
+}
+
+async function load(){
+  const d=await (await fetch("/api/tasks")).json();
+  const {tasks,reminders}=d;
+  CFG={projects:d.projects||[],targets:d.targets||[],clickup:d.clickup||{on:false,msg:"",mentions:false,delegated:false}};
+  renderTargets();
+  const rw=document.getElementById("remWarn");     // pull Promemoria fallito: i promemoria sono una fotografia ferma
+  if(reminders&&!reminders.ok){
+    rw.textContent = reminders.mode==="store"
+      ? `⚠️ Promemoria non espone la lista "${reminders.list||""}" su questo Mac. I promemoria qui sotto sono letti dall'archivio locale dell'app: li vedi, ma spuntarli o spostarli da qui non funziona finché la lista non torna visibile. Intanto spuntali dall'iPhone o da icloud.com.`
+      : "⚠️ Promemoria non raggiungibile"+(reminders.since?` · quelli mostrati sono fermi al ${reminders.since}`:"")+
+        ": spuntarli o spostarli da qui non funziona finché non si risolve. "+(reminders.err||"");
+    rw.hidden=false;
+  } else rw.hidden=true;
+  ALL=tasks; let _u=0; ALL.forEach(t=>{t._uid=_u++;(t.children||[]).forEach(c=>c._uid=_u++);});
+  const mon=monday(), sun=new Date(mon); sun.setDate(mon.getDate()+6);
+  const mesi=["gen","feb","mar","apr","mag","giu","lug","ago","set","ott","nov","dic"];
+  const today=new Date();
+  document.getElementById("range").textContent=`${mon.getDate()} - ${sun.getDate()} ${mesi[sun.getMonth()]} ${sun.getFullYear()}`;
+  document.getElementById("todayLabel").textContent=DAYN[(today.getDay()+6)%7]+" · OGGI";
+  document.getElementById("todayDate").textContent=today.getDate()+" "+mesi[today.getMonth()];
+  renderChips(); render();
+  if(DET_KEY) renderDetail();      // modale aperta durante l'auto-refresh: ri-agganciata al dato fresco
+  // Menzioni e Delegate esistono solo con ClickUp configurato: senza, i riquadri restano nascosti
+  // e non parte nessuna richiesta.
+  const cu=CFG.clickup;
+  document.getElementById("mentBox").hidden=!cu.mentions;
+  document.getElementById("statMent").hidden=!cu.mentions;
+  document.getElementById("delegBox").hidden=!cu.delegated;
+  MENT=[]; DELEG=[];
+  if(cu.mentions){ try{const {mentions}=await (await fetch("/api/mentions")).json(); MENT=mentions||[];}catch(e){} }
+  renderMentions(); render();
+  if(cu.delegated){ try{const {delegated}=await (await fetch("/api/delegated")).json(); DELEG=delegated||[];}catch(e){} }
+  renderDelegated();
+  // Una call per (titolo, giorno, orario): lo stesso invito può arrivare su più calendari, e
+  // Calendar.app restituisce sia la serie ricorrente sia l'occorrenza modificata.
+  try{const {calendar}=await (await fetch("/api/calendar")).json(); const seen=new Set();
+    CALLS=(calendar||[]).filter(c=>{const k=[c.title.trim().toLowerCase(),c.date,c.time,c.end].join("|"); if(seen.has(k)) return false; seen.add(k); return true;});}catch(e){CALLS=[];}
+  render();
+}
+// --- Aggiungi task (Vault, Promemoria o ClickUp) ---
+// Il menu delle destinazioni è l'elenco che manda il server (CFG.targets): progetti di brain.json,
+// lista Promemoria se accesa, liste ClickUp dell'aggiunta rapida.
+function renderTargets(){
+  const sel=document.getElementById("addTarget"), cur=sel.value;
+  sel.innerHTML=CFG.targets.map(t=>`<option value="${esc(t.key)}">${esc(t.label)}</option>`).join("");
+  if(CFG.targets.some(t=>t.key===cur)) sel.value=cur;      // l'auto-refresh non cambia la scelta in corso
+}
+const targetTag=k=>((CFG.targets.find(t=>t.key===k)||{}).tag)||"";
+// Pre-compila il tag col progetto Vault scelto, senza calpestare eventuali tag già scritti a mano.
+function onTargetChange(){
+  const sel=document.getElementById("addTarget").value, ti=document.getElementById("addTags");
+  const def=targetTag(sel);
+  const cur=ti.value.trim();
+  if(!cur || CFG.targets.some(t=>t.tag&&t.tag===cur)) ti.value=def;   // vuoto o solo un tag-progetto → sostituisci
+}
+function openAdd(){
+  if(!CFG.targets.length){ alert("Nessuna destinazione disponibile: dichiara almeno un progetto in .claude/config/brain.json e riavvia il cruscotto."); return; }
+  document.getElementById("addBg").classList.add("open"); const t=document.getElementById("addText"); t.value=""; document.getElementById("addDue").value=""; document.getElementById("addSubs").value=""; document.getElementById("addTags").value=""; onTargetChange(); setTimeout(()=>t.focus(),40); }
+function closeAdd(){ document.getElementById("addBg").classList.remove("open"); }
+async function submitAdd(){
+  const text=document.getElementById("addText").value.trim();
+  if(!text){ document.getElementById("addText").focus(); return; }
+  const target=document.getElementById("addTarget").value;
+  const due=document.getElementById("addDue").value||null;
+  const subtasks=document.getElementById("addSubs").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  const tags=document.getElementById("addTags").value.split(/[\s,]+/).map(s=>s.replace(/^#/,"").trim()).filter(Boolean);
+  const btn=document.getElementById("addSubmit"); btn.disabled=true; btn.textContent="Creo…";
+  try{
+    const r=await fetch("/api/create",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,target,due,subtasks,tags})});
+    const j=await r.json();
+    if(j.ok){ closeAdd(); await load(); }
+    else alert("Non creata: "+(j.msg||"errore"));
+  }catch(e){ alert("Errore rete: "+e); }
+  finally{ btn.disabled=false; btn.textContent="Crea"; }
+}
+
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeDetail(); closeAdd(); } });
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+load();
+setInterval(load, 90*1000);   // auto-refresh ogni 90s (task freschi da ClickUp + Apple Promemoria + menzioni)
+</script>
+</body>
+</html>

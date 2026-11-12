@@ -1,0 +1,5 @@
+# audit-log.md e' un registro a sola aggiunta su cui possono scrivere piu' fonti (computer,
+# routine notturna, telefono): in caso di conflitto la soluzione giusta e' tenere tutte le
+# righe. NON estendere ad altri file: sul contenuto che due lati riscrivono la fusione si fa
+# a mano, con Claude in sessione (CLAUDE.md, sezione 10).
+audit-log.md merge=union

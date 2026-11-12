@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  MODELLO di job launchd: giro email quotidiano, ore 08:00. SOLA LETTURA: lancia daily.py, che
+  legge Apple Mail e scrive il digest in _local-only/mail/. Non invia, non risponde, non marca
+  nulla come letto. Se il Mac dorme alle 08:00, launchd recupera il giro al risveglio
+  (StartCalendarInterval).
+
+  FACOLTATIVO, e di solito NON serve. Nessuno script del vault lo installa. Il giro posta gira
+  gia' da solo dentro heartbeat.py, in sessione, dove i permessi ci sono: il digest si rifa'
+  quando supera MAIL_MAX_AGE_H (vedi il blocco EMAIL in cima a heartbeat.py).
+
+  Segnaposto da sostituire prima di usarlo:
+    __VAULT__    percorso assoluto del vault
+    __PYTHON__   percorso assoluto di python3 (quello che risponde a `which python3`)
+    __HOME__     percorso assoluto della tua cartella utente
+
+  PERCHE' NON E' ACCESO DI DEFAULT. Un job launchd gira senza "app responsabile". Se il vault
+  sta in una cartella protetta da macOS (Scrivania, Documenti, Download), il job non riesce
+  nemmeno a leggere lo script:
+
+      can't open file '.../.claude/scripts/mail/daily.py': Operation not permitted
+
+  Servono DUE consensi dati a mano, che un job senza schermo non puo' chiedere: Accesso completo
+  al disco per l'interprete python3, piu' Automazione -> Mail. Il primo e' un allargamento largo
+  (vale per QUALSIASI script lanciato da quel python3): valuta se lo vuoi davvero. In
+  alternativa tieni il vault fuori dalle cartelle protette.
+
+  Per attivarlo, dopo i consensi e dopo aver messo `mail.enabled` a true in
+  `.claude/config/brain.json`: sostituisci i segnaposto, copia il file in
+  ~/Library/LaunchAgents/ e lancia `launchctl bootstrap gui/$UID <percorso del file>`.
+  Con il modulo posta spento daily.py esce subito senza leggere nulla.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.secondbrain.mail-daily</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>__PYTHON__</string>
+        <string>__VAULT__/.claude/scripts/mail/daily.py</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>CLAUDE_PROJECT_DIR</key>
+        <string>__VAULT__</string>
+        <key>PATH</key>
+        <string>__HOME__/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>8</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>RunAtLoad</key>
+    <false/>
+    <key>StandardOutPath</key>
+    <string>__HOME__/Library/Logs/secondbrain-mail-daily.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/Library/Logs/secondbrain-mail-daily.log</string>
+</dict>
+</plist>

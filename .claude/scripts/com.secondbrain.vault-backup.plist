@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  MODELLO, non un file pronto: contiene segnaposto che vanno sostituiti prima di installarlo.
+    __VAULT__   percorso assoluto della cartella del vault (senza barra finale)
+    __HOME__    percorso assoluto della tua cartella utente
+  Come riempirli, installare e disinstallare: .claude/scripts/AUTOMAZIONI.md
+  Cosa fa: ogni ora lancia auto-backup.sh (solo il backup, niente call ne' posta).
+  ATTENZIONE: parte con /bin/bash, che macOS blocca se il vault sta in Scrivania, Documenti,
+  Download o iCloud Drive. In quel caso usa com.secondbrain.autopilot (vedi AUTOMAZIONI.md).
+  Non installarli tutti e due.
+-->
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.secondbrain.vault-backup</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<string>__VAULT__/.claude/scripts/auto-backup.sh</string>
+	</array>
+	<key>WorkingDirectory</key>
+	<string>__VAULT__</string>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StartInterval</key>
+	<integer>3600</integer>
+	<key>StandardOutPath</key>
+	<string>__HOME__/Library/Logs/secondbrain-backup.log</string>
+	<key>StandardErrorPath</key>
+	<string>__HOME__/Library/Logs/secondbrain-backup.log</string>
+</dict>
+</plist>

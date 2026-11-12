@@ -1,0 +1,57 @@
+{
+  "_leggimi": "Configurazione unica del vault. La compila Claude con te al primo avvio (PRIMO-AVVIO.md) e la aggiorna quando nasce un progetto nuovo. Nessun segreto qui: le chiavi stanno in _local-only/secrets/.env.",
+
+  "owner_name": "",
+  "git_author": "",
+
+  "_leggimi_projects": "Un oggetto per progetto. id = nome breve; path = cartella del progetto; keywords e title_only = parole che fanno smistare le call; alias = i nomi con cui lo chiami in chat: quando ne scrivi uno, l'assistente carica da solo metodo, essenziali, loop aperti e skill del progetto.",
+  "projects": [
+    {
+      "id": "progetto-esempio",
+      "path": "10-lavoro/progetto-esempio",
+      "keywords": ["progetto esempio"],
+      "title_only": [],
+      "alias": ["progetto esempio", "progetto-esempio"]
+    }
+  ],
+
+  "extra_routes": [
+    {
+      "id": "fiscale-legale",
+      "dest": "20-fiscale-legale/calls",
+      "keywords": ["commercialista", "partita iva", "dichiarazione dei redditi"],
+      "title_only": ["fiscale", "tasse", "contratto"]
+    }
+  ],
+
+  "reminders_list": "Lavoro",
+
+  "calendars": [],
+
+  "mail": {
+    "_leggimi": "Modulo posta (Apple Mail, sola lettura). Spento finche' enabled non e' true e accounts non ha almeno un nome. accounts = nomi degli account come compaiono in Mail. noise = mittenti o oggetti da ignorare. health_extra = parole in piu' che marcano un'email come sanitaria (non arriva all'assistente). no_edit = cartelle del vault che il giro posta non deve mai modificare.",
+    "enabled": false,
+    "accounts": [],
+    "noise": [],
+    "health_extra": [],
+    "no_edit": []
+  },
+
+  "clickup": {
+    "_leggimi": "Modulo ClickUp del cruscotto. Spento finche' workspaces e' vuoto: nessuna chiamata a ClickUp. La chiave non sta qui ma in _local-only/secrets/.env, riga CLICKUP_TOKEN=... Tutti gli id sono quelli che si leggono negli indirizzi di ClickUp, scritti fra virgolette. member_id = il tuo id utente (vuoto: il cruscotto lo chiede a ClickUp con la chiave). workspaces = [{\"id\": \"id del workspace\", \"tag\": \"etichetta data in board alle task senza tag\", \"lists\": [\"id lista\"]}], con lists vuoto o assente per vedere tutte le liste. exclude_statuses = stati le cui task non entrano in board. quick_add = liste proposte dal bottone Aggiungi, nella forma {\"Etichetta nel menu\": \"id lista\"}. delegated_lists = [\"id lista\"]: liste dove cercare le task create da te e assegnate ad altri. mention_scopes = [{\"workspace\": \"id del workspace\", \"spaces\": [\"id spazio\"]}]: dove cercare i commenti che ti menzionano, con spaces vuoto per tutto il workspace.",
+    "member_id": "",
+    "workspaces": [],
+    "exclude_statuses": ["done", "complete", "closed"],
+    "quick_add": {},
+    "delegated_lists": [],
+    "mention_scopes": []
+  },
+
+  "cruscotto": {
+    "_leggimi": "App Cruscotto (.claude/apps/cruscotto). port = porta locale. reminders = false spegne Apple Promemoria in board (la lista e' reminders_list, qui sopra). reminders_store_fallback = true: se Promemoria non risponde, leggi in sola lettura l'archivio locale dell'app (macOS chiede un permesso). calendar = true mostra in board gli eventi di Apple Calendario (i calendari sono in calendars, qui sopra). Dopo ogni modifica il cruscotto va riavviato.",
+    "port": 8765,
+    "reminders": true,
+    "reminders_store_fallback": false,
+    "calendar": false
+  }
+}

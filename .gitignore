@@ -1,0 +1,24 @@
+# segreti e file solo locali: mai su GitHub
+.env
+*.env
+_local-only/
+
+# file di lavoro degli script
+__pycache__/
+*.pyc
+*.lock
+.DS_Store
+
+# `.claude/data/` resta fuori dal repo (log, stato del briefing, file di lavoro), con una
+# eccezione: l'elenco delle call gia' scaricate da Granola deve viaggiare col repo. Sono solo
+# identificativi, nessun segreto. Una routine cloud lavora su una copia del repo: senza questo
+# file ripartirebbe da zero ogni notte e riscaricherebbe tutte le call.
+# Serve la forma `cartella/*` e non `cartella/`: Git non entra in una cartella esclusa, quindi
+# una eccezione sotto `.claude/data/` non verrebbe mai letta.
+.claude/data/*
+!.claude/data/granola/
+.claude/data/granola/*
+!.claude/data/granola/synced.json
+
+# l'icona del cruscotto compilata sul tuo computer contiene il percorso della tua cartella
+.claude/apps/cruscotto/Cruscotto.app/
